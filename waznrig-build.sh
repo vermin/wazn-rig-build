@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.11"
+VERS="v1.00"
 
 # Clear screen
 clear
@@ -10,13 +10,13 @@ errexit() {
   # Draw 5 lines of + and message
   for i in {1..5}; do echo "+"; done
   echo -e "\e[91mError raised! Cleaning Up and Exiting.\e[39m"
-  
+
   # Remove _source directory if found.
   if [ -d "$SCRIPTPATH/_source" ]; then rm -r $SCRIPTPATH/_source; fi
-  
-  # Remove xmrig directory if found.
-  if [ -d "$SCRIPTPATH/xmrig" ]; then rm -r $SCRIPTPATH/xmrig; fi
-  
+
+  # Remove wazn-rig directory if found.
+  if [ -d "$SCRIPTPATH/wazn-rig" ]; then rm -r $SCRIPTPATH/wazn-rig; fi
+
   # Dirty Exit
   exit 1
 }
@@ -41,13 +41,13 @@ phasefooter() {
 inoutheader() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
-  echo " XMRig Build Script $VERS"
+  echo " WAZNRig Build Script $VERS"
 
   [ $BUILD -eq 7 ] && echo " for ARMv7"
   [ $BUILD -eq 8 ] && echo " for ARMv8"
   [ $BUILD -eq 0 ] && echo " for x86-64"
 
-  echo " by DocDrydenn @ getpimp.org"
+  echo " by vermin & DocDryden"
   echo
 
   if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SKIPPING BUILD PROCESS ++\e[39m\e[0m"; echo; fi
@@ -115,33 +115,10 @@ then
     sleep 3
   fi
 else
-  # New Version Notification/Prompt
-  LVER="$(curl -sI "https://github.com/DocDrydenn/xmrig-build/releases/latest" | grep -Po 'tag\/\K(v\S+)')"
-  if [[ "$VERS" != "$LVER" ]]
-  then
-    echo -e "\e[5m\e[44m++ New Version Detected ++\e[39m\e[0m"
-    echo
-    echo " $VERS - Current"
-    echo " $LVER - Online"
-    echo
-    read -r -p "Do you want to continue anyway? (not recommended) [y/N] " response
-    response=${response,,}
-    if [[ $response =~ ^(no|n| ) ]] || [[ -z $response ]]
-    then
-      echo
-      echo "Script Aborted."
-      exit 0
-    else
-      echo
-      echo "Continuing..."
-      sleep 3
-    fi
-  fi
-fi
 
 ### Start Phase 6
-PHASE="Dependancies"
-phaseheader $PHASE 
+PHASE="Dependencies"
+phaseheader $PHASE
 
 # Install required tools for building from source
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt update && apt upgrade -y\e[39m"
@@ -154,50 +131,50 @@ phasefooter $PHASE
 
 ### Start Phase 5
 PHASE="Backup"
-phaseheader $PHASE 
-if [ -d "$SCRIPTPATH/xmrig" ]
+phaseheader $PHASE
+if [ -d "$SCRIPTPATH/wazn-rig" ]
 then
-  if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
+  if [ -f "$SCRIPTPATH/wazn-rig/waznrig-build.7z.bak" ]
   then
     # Remove last backup archive
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
-    rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
-    echo "xmrig-build.7z.bak removed"
+    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/wazn-rig/waznrig-build.7z.bak\e[39m"
+    rm $SCRIPTPATH/wazn-rig/waznrig-build.7z.bak
+    echo "waznrig-build.7z.bak removed"
   else
-    echo "xmrig-build.7z.bak doesn't exist - Skipping Delete..."
+    echo "waznrig-build.7z.bak doesn't exist - Skipping Delete..."
   fi
-  if [ -f "$SCRIPTPATH/xmrig/xmrig.bak" ]
+  if [ -f "$SCRIPTPATH/wazn-rig/waznrig.bak" ]
   then
     # Remove last backup binary
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
-    rm $SCRIPTPATH/xmrig/xmrig.bak
-    echo "xmrig.bak removed"
+    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/wazn-rig/waznrig.bak\e[39m"
+    rm $SCRIPTPATH/wazn-rig/waznrig.bak
+    echo "waznrig.bak removed"
   else
-    echo "xmrig.bak doesn't exist - Skipping Delete..."
+    echo "waznrig.bak doesn't exist - Skipping Delete..."
   fi
-  if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z" ]
+  if [ -f "$SCRIPTPATH/wazn-rig/waznrig-build.7z" ]
   then
     # Backup last archive
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
-    mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
-    echo "xmrig-build.7z renamed to xmrig-build.7z.bak"
+    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/wazn-rig/waznrig-build.7z $SCRIPTPATH/wazn-rig/waznrig-build.7z.bak\e[39m"
+    mv $SCRIPTPATH/wazn-rig/waznrig-build.7z $SCRIPTPATH/wazn-rig/waznrig-build.7z.bak
+    echo "waznrig-build.7z renamed to waznrig-build.7z.bak"
   else
-    echo "xmrig-build.7z doesn't exist - Skipping Backup..."
+    echo "waznrig-build.7z doesn't exist - Skipping Backup..."
   fi
-  if [ -f "$SCRIPTPATH/xmrig/xmrig" ]
+  if [ -f "$SCRIPTPATH/wazn-rig/waznrig" ]
   then
     # Backup last binary
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
-    mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
-    echo "xmrig renamed to xmrig.bak"
+    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/wazn-rig/waznrig $SCRIPTPATH/wazn-rig/waznrig.bak\e[39m"
+    mv $SCRIPTPATH/wazn-rig/waznrig $SCRIPTPATH/wazn-rig/waznrig.bak
+    echo "waznrig renamed to waznrig.bak"
   else
-    echo "xmrig doesn't exist - Skipping Backup..."
+    echo "waznrig doesn't exist - Skipping Backup..."
   fi
 else
-  # Make xmrig folder if it doesn't exist
-  echo "Creating xmrig directory..."
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
-  mkdir -p $SCRIPTPATH/xmrig
+  # Make wazn-rig folder if it doesn't exist
+  echo "Creating wazn-rig directory..."
+  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/wazn-rig\e[39m"
+  mkdir -p $SCRIPTPATH/wazn-rig
 fi
 
 ### End Phase 5
@@ -222,19 +199,19 @@ mkdir $SCRIPTPATH/_source
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH/_source\e[39m"
 cd $SCRIPTPATH/_source
 
-# Clone XMRig from github into source folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - git clone https://github.com/xmrig/xmrig.git\e[39m"
-git clone https://github.com/xmrig/xmrig.git
+# Clone WAZNRig from github into source folder
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - git clone https://github.com/project-wazn/waznrig.git\e[39m"
+git clone https://github.com/project-wazn/wazn-rig.git
 
 # Change working dir to clone - Create build folder - Change working dir to build folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build && cd build\e[39m"
-cd xmrig && mkdir build && cd build
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd wazn-rig && mkdir build && cd build\e[39m"
+cd wazn-rig && mkdir build && cd build
 
 ### End Phase 4
 phasefooter $PHASE
 
 ### Start Phase 3
-PHASE="Compiling/Building"
+PHASE="Compiling & Building"
 phaseheader $PHASE
 
 # Setup build enviroment
@@ -248,8 +225,8 @@ phaseheader $PHASE
 # Bypass make process if debug is enabled.
 if [[ "$DEBUG" = "1" ]]
 then
-  echo -e "\e[96m++ $PHASE - touch xmrig\e[39m"
-  touch xmrig
+  echo -e "\e[96m++ $PHASE - touch waznrig\e[39m"
+  touch waznrig
 else
   make
 fi
@@ -261,17 +238,17 @@ phasefooter $PHASE
 PHASE="Compressing/Moving"
 phaseheader $PHASE
 
-# Compress built xmrig into archive
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - 7z a xmrig-build.7z $SCRIPTPATH/xmrig\e[39m"
-7z a xmrig-build.7z $SCRIPTPATH/xmrig
+# Compress built waznrig into archive
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - 7z a waznrig-build.7z $SCRIPTPATH/wazn-rig\e[39m"
+7z a waznrig-build.7z $SCRIPTPATH/wazn-rig
 
-# Copy archive to xmrig folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z\e[39m"
-cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
+# Copy archive to waznrig folder
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp waznrig-build.7z $SCRIPTPATH/wazn-rig/waznrig-build.7z\e[39m"
+cp waznrig-build.7z $SCRIPTPATH/wazn-rig/waznrig-build.7z
 
-# Copy built xmrig to xmrig folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig\e[39m"
-cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
+# Copy built waznrig to waznrig folder
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp $SCRIPTPATH/_source/wazn-rig/build/waznrig $SCRIPTPATH/wazn-rig/waznrig\e[39m"
+cp $SCRIPTPATH/_source/wazn-rig/build/waznrig $SCRIPTPATH/wazn-rig/waznrig
 
 # End Phase 2
 phasefooter $PHASE
@@ -290,21 +267,21 @@ rm -r _source
 echo "Source directory removed."
 
 # Create start-example.sh
-if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
+if [ ! -f "$SCRIPTPATH/wazn-rig/start-example.sh" ]
 then
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF\e[39m"
-cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
+  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/wazn-rig/start-example.sh <<EOF\e[39m"
+cat > $SCRIPTPATH/wazn-rig/start-example.sh <<EOF
 #! /bin/bash
 
 screen -wipe
-screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name> -k --verbose
+screen -dm $SCRIPTPATH/wazn-rig/waznrig -o <pool_IP>:<pool_port> -l /var/log/waznrig-cpu.log --donate-level 1 --rig-id <rig_name> -k --verbose
 screen -r
 EOF
   echo "start-example.sh created."
 
   # Make start-example.sh executable
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
-  chmod +x $SCRIPTPATH/xmrig/start-example.sh
+  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/wazn-rig/start-example.sh\e[39m"
+  chmod +x $SCRIPTPATH/wazn-rig/start-example.sh
   echo "start-example.sh made executable."
 fi
 
@@ -313,9 +290,9 @@ phasefooter $PHASE
 
 # Close Out
 inoutheader
-echo " Folder Location: $SCRIPTPATH/xmrig/"
-echo " Bin: $SCRIPTPATH/xmrig/xmrig"
-echo " Example Start Script: $SCRIPTPATH/xmrig/start-example.sh"
+echo " Folder Location: $SCRIPTPATH/wazn-rig/"
+echo " Bin: $SCRIPTPATH/wazn-rig/waznrig"
+echo " Example Start Script: $SCRIPTPATH/wazn-rig/start-example.sh"
 echo
 inoutfooter
 
